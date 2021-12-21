@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1639897158 source:e:\c projects\mc callico\mccallico\main.c
+	<stdio.h>
+	<stdlib.h>
+	"asm.h"
+
+1640106830 source:e:\c projects\mc callico\mccallico\asm.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<math.h>
+
+1640099477 e:\c projects\mc callico\mccallico\asm.h
+
+1639366123 source:e:\c projects\mc callico\mccallico\utils.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1639366100 e:\c projects\mc callico\mccallico\utils.h
+
+1640106895 source:e:\c projects\mc callico\mccallico\main.cpp
+	<iostream>
+	"asm.h"
+
