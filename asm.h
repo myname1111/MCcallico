@@ -1,8 +1,10 @@
 #ifndef ASM_H_INCLUDED
 #define ASM_H_INCLUDED
 
-char *assemble(char asm_prog[]);
+char *assemble(const char asm_prog[]);
 
-void run(char HD[], char ram[], char reg[][25], int prog);
+char* to_char_arr(char arr[][25]);
+
+void run(char HD[][25], char ram[][25], char reg[][25], int prog);
 
 #endif // ASM_H_INCLUDED
