@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
+#include <conio.h>
 
 struct Dict{
     char* key;
@@ -307,7 +309,7 @@ char* assemble(const char asm_prog[]){
 char* to_char_arr(const char arr[][25]){
     char* r_out = malloc(10000);
     char out[10000] = "";
-    for(int i = 0;strcmp(arr[i], "000000000000000000000000");i++){
+    for(int i = 0;strcmp(arr[i], "\0");i++){
         strcat(out, arr[i]);
     }
     strncpy(r_out, out, 10000);
@@ -454,8 +456,16 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
             strcpy(HD[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
             c_code += 53;
         }
+        else if (strcmp(insts, "10100") == 0) {
+            while (kbhit() == 0){
+                char input_char = getch();
+                int inpch_int = input_char;
+                printf("Key = %c, Ascii = %d\n", input_char, inpch_int, dec2bin());
+            }
+            c_code += 77;
+        }
         else {
-            printf("\ndone with error with insts %s\n", insts);
+            printf("\ndone with error with insts \"%s\"\n", insts);
             loop = 0;
         }
         line++;

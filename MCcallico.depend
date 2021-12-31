@@ -4,11 +4,13 @@
 	<stdlib.h>
 	"asm.h"
 
-1640359415 source:e:\c projects\mc callico\mccallico\asm.c
+1640960526 source:e:\c projects\mc callico\mccallico\asm.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<math.h>
+	<stdio.h>
+	<conio.h>
 
 1640181173 e:\c projects\mc callico\mccallico\asm.h
 
@@ -19,7 +21,7 @@
 
 1639366100 e:\c projects\mc callico\mccallico\utils.h
 
-1640359389 source:e:\c projects\mc callico\mccallico\main.cpp
+1640860764 source:e:\c projects\mc callico\mccallico\main.cpp
 	<iostream>
 	<string.h>
 	"asm.h"

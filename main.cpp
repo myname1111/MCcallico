@@ -8,9 +8,7 @@ using namespace std;
 int main(){
     const char prog[] =
     "STR;"
-    "SRG,A,18;"
-    "RGRG,B,A;"
-    "ADD,C,A,B;"
+    "INPT,0,0,1;"
     "END";
     char* bin = assemble(prog);
     cout << bin << endl;
