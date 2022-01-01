@@ -457,10 +457,12 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
             c_code += 53;
         }
         else if (strcmp(insts, "10100") == 0) {
-            while (kbhit() == 0){
+            if (kbhit() && bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
                 char input_char = getch();
                 int inpch_int = input_char;
-                printf("Key = %c, Ascii = %d\n", input_char, inpch_int, dec2bin());
+                char inpch_str[10];
+                itoa(inpch_int, inpch_str, 10);
+                strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], dec2bin(inpch_str));
             }
             c_code += 77;
         }
