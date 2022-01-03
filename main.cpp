@@ -3,12 +3,52 @@
 extern "C"{
     #include "asm.h"
 }
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+
 using namespace std;
 
-int main(){
+void init(){
+    glClearColor(0, 0, 0, 1);
+}
+
+void display(){
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
+
+    draw();
+
+    glFlush();
+}
+
+void reshape(int x, int y){
+    glViewport(0, 0, x, y);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, 256 * scale_size, 144 * scale_size, 0);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+int main(int argc, char**argv){
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB);
+
+    glutInitWindowPosition(0, 0);
+    glutInitWindowSize(256 * scale_size, 144 * scale_size);
+
+    glutCreateWindow("Program");
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+
+    init();
+    init_asm();
+
     const char prog[] =
     "STR;"
-    "INPT,0,0,1;"
+    "INPT,0,0,0;"
+    "SRM,0,19091;"
+    "OUPT,0,0,1;"
     "END";
     char* bin = assemble(prog);
     cout << bin << endl;
@@ -24,5 +64,9 @@ int main(){
     char reg[1000][25] = {"\0"};
     char ram[][25] = {"\0"};
     run(HD, ram, reg, 0);
+
+    display();
+
+    glutMainLoop();
     return 0;
 }

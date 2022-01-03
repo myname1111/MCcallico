@@ -1,14 +1,39 @@
+#include "asm.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
 #include <conio.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#include <unistd.h>
+
+char draw_table[36864];
+int draw_used = 0;
+int scale_size = 5;
 
 struct Dict{
     char* key;
     int val;
 };
+
+void draw_to_out(char in_str[]){
+    if (draw_used == 36864){
+        draw_used = 0;
+    }
+    for (int i = draw_used;(i - draw_used) < strlen(in_str);i++){
+        draw_table[i] = in_str[i - draw_used];
+    }
+    draw_used += 24;
+}
+
+void init_asm(){
+    for (int i = 0;i < sizeof(draw_table) / sizeof(draw_table[0]);i++){
+        draw_table[i] = '0';
+    }
+}
 
 char* reg2bin(char reg[10]){
     char* out = "";
@@ -325,6 +350,21 @@ void print_2d_char_arr(char arr[][25]){
     printf("]\n");
 }
 
+void draw(){
+    glPointSize(scale_size);
+    glBegin(GL_POINTS);
+    float coord_x;
+    float coord_y;
+    for (int i = 0;i < sizeof(draw_table) / sizeof(draw_table[0]);i++){
+        coord_x = i % 256 + 0.5;
+        coord_y = i / 256 + 0.5;
+        if (draw_table[i] == '1'){
+            glVertex2d(coord_x * scale_size, coord_y * scale_size);
+        }
+    }
+    glEnd();
+}
+
 int run(char HD[][25], char ram[][25], char reg[][25], int prog){
     int code_runned = 5;
     int c_code = prog + code_runned;
@@ -340,6 +380,7 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
     while (strcmp(strsplice(HD_used, prog, prog + 5), "00000") == 0 && loop){
         strcpy(HD_used, to_char_arr(HD));
         insts = strsplice(HD_used, c_code, c_code + 5);
+        printf("running insts %s\n", insts);
         if (strcmp(insts, "00001") == 0){
             printf("\ndone\n");
             loop = 0;
@@ -463,6 +504,12 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 char inpch_str[10];
                 itoa(inpch_int, inpch_str, 10);
                 strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], dec2bin(inpch_str));
+            }
+            c_code += 77;
+        }
+        else if (strcmp(insts, "10101") == 0){
+            if (bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
+                draw_to_out(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))]);
             }
             c_code += 77;
         }

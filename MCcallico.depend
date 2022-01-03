@@ -4,15 +4,20 @@
 	<stdlib.h>
 	"asm.h"
 
-1641009167 source:e:\c projects\mc callico\mccallico\asm.c
+1641218590 source:e:\c projects\mc callico\mccallico\asm.c
+	"asm.h"
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<math.h>
 	<stdio.h>
 	<conio.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<GL/glut.h>
+	<unistd.h>
 
-1640181173 e:\c projects\mc callico\mccallico\asm.h
+1641204048 e:\c projects\mc callico\mccallico\asm.h
 
 1639366123 source:e:\c projects\mc callico\mccallico\utils.c
 	<stdio.h>
@@ -21,8 +26,11 @@
 
 1639366100 e:\c projects\mc callico\mccallico\utils.h
 
-1641007517 source:e:\c projects\mc callico\mccallico\main.cpp
+1641218545 source:e:\c projects\mc callico\mccallico\main.cpp
 	<iostream>
 	<string.h>
 	"asm.h"
+	<GL/gl.h>
+	<GL/glu.h>
+	<GL/glut.h>
 
