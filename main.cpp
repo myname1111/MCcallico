@@ -46,9 +46,10 @@ int main(int argc, char**argv){
 
     const char prog[] =
     "STR;"
-    "INPT,0,0,0;"
-    "SRM,0,19091;"
-    "OUPT,0,0,1;"
+    "SRG,A,0;"
+    "IF,A;"
+    "SRG,B,0;"
+    "SRG,B,1;"
     "END";
     char* bin = assemble(prog);
     cout << bin << endl;

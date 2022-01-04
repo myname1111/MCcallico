@@ -12,7 +12,7 @@
 
 char draw_table[36864];
 int draw_used = 0;
-int scale_size = 5;
+int scale_size = 7;
 
 struct Dict{
     char* key;
@@ -324,6 +324,9 @@ char* assemble(const char asm_prog[]){
             strcat(out, reg2bin(insts[1]));
             strcat(out, reg2bin(insts[2]));
         }
+        else {
+            fprintf(stderr, "Assembly error: unable to recognize instruction %s\n", insts[0]);
+        }
     }
 
     strcpy(bin, out);
@@ -375,149 +378,600 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
     int reg2;
     int res_int;
     char* res;
+    int if_line = 0;
+    int if_line_new = 0;
+    int if_result = 0;
     char HD_used[10000] = "";
     strncpy(HD_used, to_char_arr(HD), 10000);
     while (strcmp(strsplice(HD_used, prog, prog + 5), "00000") == 0 && loop){
         strcpy(HD_used, to_char_arr(HD));
         insts = strsplice(HD_used, c_code, c_code + 5);
-        printf("running insts %s\n", insts);
-        if (strcmp(insts, "00001") == 0){
-            printf("\ndone\n");
-            loop = 0;
-        }
-        else if (strcmp(insts, "00010") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = reg1 + reg2;
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "00011") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = reg1 - reg2;
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "00100") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = reg1 * reg2;
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "00101") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = reg1 / reg2;
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "00110") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = reg1 & reg2;
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "00111") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = reg1 | reg2;
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "01000") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = reg1 ^ reg2;
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "01001") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = ~(reg1 & reg2);
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "01010") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = ~(reg1 | reg2);
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "01011") == 0){
-            reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
-            res_int = ~(reg1 ^ reg2);
-            sprintf(res, "%d", res_int);
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
-            c_code += 11;
-        }
-        else if (strcmp(insts, "01100") == 0) {
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], strsplice(HD_used, c_code + 7, c_code + 31));
-            c_code += 31;
-        }
-        else if (strcmp(insts, "01101") == 0) {
-            strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], strsplice(HD_used, c_code + 29, c_code + 53));
-            c_code += 53;
-        }
-        else if (strcmp(insts, "01110") == 0) {
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
-            c_code += 9;
-        }
-        else if (strcmp(insts, "01111") == 0) {
-            strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
-            c_code += 53;
-        }
-        else if (strcmp(insts, "10000") == 0) {
-            strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], reg[bin2dec(strsplice(HD_used, c_code + 29, c_code + 31))]);
-            c_code += 31;
-        }
-        else if (strcmp(insts, "10001") == 0) {
-            strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], ram[bin2dec(strsplice(HD_used, c_code + 7, c_code + 31))]);
-            c_code += 31;
-        }
-        else if (strcmp(insts, "10010") == 0) {
-            strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], HD[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
-            c_code += 53;
-        }
-        else if (strcmp(insts, "10011") == 0) {
-            strcpy(HD[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
-            c_code += 53;
-        }
-        else if (strcmp(insts, "10100") == 0) {
-            if (kbhit() && bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
-                char input_char = getch();
-                int inpch_int = input_char;
-                char inpch_str[10];
-                itoa(inpch_int, inpch_str, 10);
-                strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], dec2bin(inpch_str));
+        if (if_line == 0){
+            if (strcmp(insts, "00001") == 0){
+                printf("\ndone\n");
+                loop = 0;
             }
-            c_code += 77;
-        }
-        else if (strcmp(insts, "10101") == 0){
-            if (bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
-                draw_to_out(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))]);
+            else if (strcmp(insts, "00010") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = reg1 + reg2;
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
             }
-            c_code += 77;
+            else if (strcmp(insts, "00011") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = reg1 - reg2;
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "00100") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = reg1 * reg2;
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "00101") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = reg1 / reg2;
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "00110") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = reg1 & reg2;
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "00111") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = reg1 | reg2;
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "01000") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = reg1 ^ reg2;
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "01001") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = ~(reg1 & reg2);
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "01010") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = ~(reg1 | reg2);
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "01011") == 0){
+                reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                res_int = ~(reg1 ^ reg2);
+                sprintf(res, "%d", res_int);
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                c_code += 11;
+            }
+            else if (strcmp(insts, "01100") == 0) {
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], strsplice(HD_used, c_code + 7, c_code + 31));
+                c_code += 31;
+            }
+            else if (strcmp(insts, "01101") == 0) {
+                strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], strsplice(HD_used, c_code + 29, c_code + 53));
+                c_code += 53;
+            }
+            else if (strcmp(insts, "01110") == 0) {
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                c_code += 9;
+            }
+            else if (strcmp(insts, "01111") == 0) {
+                strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                c_code += 53;
+            }
+            else if (strcmp(insts, "10000") == 0) {
+                strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], reg[bin2dec(strsplice(HD_used, c_code + 29, c_code + 31))]);
+                c_code += 31;
+            }
+            else if (strcmp(insts, "10001") == 0) {
+                strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], ram[bin2dec(strsplice(HD_used, c_code + 7, c_code + 31))]);
+                c_code += 31;
+            }
+            else if (strcmp(insts, "10010") == 0) {
+                strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], HD[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                c_code += 53;
+            }
+            else if (strcmp(insts, "10011") == 0) {
+                strcpy(HD[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                c_code += 53;
+            }
+            else if (strcmp(insts, "10100") == 0) {
+                if (kbhit() && bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
+                    char input_char = getch();
+                    int inpch_int = input_char;
+                    char inpch_str[10];
+                    itoa(inpch_int, inpch_str, 10);
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], dec2bin(inpch_str));
+                }
+                c_code += 77;
+            }
+            else if (strcmp(insts, "10101") == 0){
+                if (bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
+                    draw_to_out(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))]);
+                }
+                c_code += 77;
+            }
+            else if (strcmp(insts, "10110") == 0){
+                if_line_new = 2;
+                if_result = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))]);
+                c_code += 7;
+            }
+            else {
+                printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
+                loop = 0;
+            }
+            line++;
         }
-        else {
-            printf("\ndone with error with insts \"%s\"\n", insts);
-            loop = 0;
+        if (if_line == 1){
+            if (if_result == 0){
+                if (strcmp(insts, "00001") == 0){
+                    printf("\ndone\n");
+                    loop = 0;
+                }
+                else if (strcmp(insts, "00010") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 + reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00011") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 - reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00100") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 * reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00101") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 / reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00110") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 & reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00111") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 | reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01000") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 ^ reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01001") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = ~(reg1 & reg2);
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01010") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = ~(reg1 | reg2);
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01011") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = ~(reg1 ^ reg2);
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01100") == 0) {
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], strsplice(HD_used, c_code + 7, c_code + 31));
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "01101") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], strsplice(HD_used, c_code + 29, c_code + 53));
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "01110") == 0) {
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    c_code += 9;
+                }
+                else if (strcmp(insts, "01111") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10000") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], reg[bin2dec(strsplice(HD_used, c_code + 29, c_code + 31))]);
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10001") == 0) {
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], ram[bin2dec(strsplice(HD_used, c_code + 7, c_code + 31))]);
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10010") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], HD[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10011") == 0) {
+                    strcpy(HD[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10100") == 0) {
+                    if (kbhit() && bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
+                        char input_char = getch();
+                        int inpch_int = input_char;
+                        char inpch_str[10];
+                        itoa(inpch_int, inpch_str, 10);
+                        strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], dec2bin(inpch_str));
+                    }
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10101") == 0){
+                    if (bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
+                        draw_to_out(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))]);
+                    }
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10110") == 0){
+                    if_line_new = 2;
+                    if_result = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))]);
+                    c_code += 7;
+                }
+                else {
+                    printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
+                    loop = 0;
+                }
+                line++;
+            }
+            else {
+                if (strcmp(insts, "00001") == 0){
+                    printf("\ndone\n");
+                    loop = 0;
+                }
+                else if (strcmp(insts, "00010") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00011") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00100") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00101") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00110") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00111") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01000") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01001") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01010") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01011") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01100") == 0) {
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "01101") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "01110") == 0) {
+                    c_code += 9;
+                }
+                else if (strcmp(insts, "01111") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10000") == 0) {
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10001") == 0) {
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10010") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10011") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10100") == 0) {
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10101") == 0){
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10110") == 0){
+                    c_code += 7;
+                }
+                else {
+                    loop = 0;
+                }
+                line++;
+            }
+            if_line_new--;
         }
-        line++;
+        if (if_line == 2){
+            if (if_result == 1){
+                if (strcmp(insts, "00001") == 0){
+                    printf("\ndone\n");
+                    loop = 0;
+                }
+                else if (strcmp(insts, "00010") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 + reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00011") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 - reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00100") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 * reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00101") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 / reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00110") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 & reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00111") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 | reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01000") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 ^ reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01001") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = ~(reg1 & reg2);
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01010") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = ~(reg1 | reg2);
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01011") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = ~(reg1 ^ reg2);
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01100") == 0) {
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], strsplice(HD_used, c_code + 7, c_code + 31));
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "01101") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], strsplice(HD_used, c_code + 29, c_code + 53));
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "01110") == 0) {
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    c_code += 9;
+                }
+                else if (strcmp(insts, "01111") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10000") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], reg[bin2dec(strsplice(HD_used, c_code + 29, c_code + 31))]);
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10001") == 0) {
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], ram[bin2dec(strsplice(HD_used, c_code + 7, c_code + 31))]);
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10010") == 0) {
+                    strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], HD[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10011") == 0) {
+                    strcpy(HD[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], ram[bin2dec(strsplice(HD_used, c_code + 29, c_code + 53))]);
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10100") == 0) {
+                    if (kbhit() && bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
+                        char input_char = getch();
+                        int inpch_int = input_char;
+                        char inpch_str[10];
+                        itoa(inpch_int, inpch_str, 10);
+                        strcpy(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))], dec2bin(inpch_str));
+                    }
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10101") == 0){
+                    if (bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) == 0){
+                        draw_to_out(ram[bin2dec(strsplice(HD_used, c_code + 5, c_code + 29))]);
+                    }
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10110") == 0){
+                    if_line_new = 2;
+                    if_result = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))]);
+                    c_code += 7;
+                }
+                else {
+                    printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
+                    loop = 0;
+                }
+                line++;
+            }
+            else {
+                if (strcmp(insts, "00001") == 0){
+                    printf("\ndone\n");
+                    loop = 0;
+                }
+                else if (strcmp(insts, "00010") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00011") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00100") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00101") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00110") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "00111") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01000") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01001") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01010") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01011") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "01100") == 0) {
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "01101") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "01110") == 0) {
+                    c_code += 9;
+                }
+                else if (strcmp(insts, "01111") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10000") == 0) {
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10001") == 0) {
+                    c_code += 31;
+                }
+                else if (strcmp(insts, "10010") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10011") == 0) {
+                    c_code += 53;
+                }
+                else if (strcmp(insts, "10100") == 0) {
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10101") == 0){
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "10110") == 0){
+                    c_code += 7;
+                }
+                else {
+                    loop = 0;
+                }
+                line++;
+            }
+            if_line_new--;
+        }
+        if_line = if_line_new;
     }
+    printf("%s\n", reg[1]);
     return 0;
 }
