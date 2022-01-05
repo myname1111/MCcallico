@@ -46,6 +46,9 @@ int main(int argc, char**argv){
 
     const char prog[] =
     "STR;"
+    "END:;"
+    "SRG,A,1;"
+    "JMP,END;"
     "SRG,A,0;"
     "IF,A;"
     "SRG,B,0;"
