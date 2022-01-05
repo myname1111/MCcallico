@@ -130,7 +130,6 @@ char* assemble(const char asm_prog[]){
     struct Dict jump_point[10000] = {{.key = NULL, .val=NULL}};
     int jump_point_len = 0;
 
-
     for (int i = 0;strcmp(lines[i], "\0") != 0;i++){
         char insts[10][20];
         char* tok;
@@ -140,9 +139,9 @@ char* assemble(const char asm_prog[]){
             tok = strtok(NULL, ",");
         }
         if (insts[0][strlen(insts[0])-1] == ':'){
-                jump_point[jump_point_len].key = strsplice(insts[0], 0, strlen(insts[0]) - 1);
-                jump_point[jump_point_len].val = i;
-                jump_point_len++;
+            jump_point[jump_point_len].key = strsplice(insts[0], 0, strlen(insts[0]) - 1);
+            jump_point[jump_point_len].val = i;
+            jump_point_len++;
         }
         else if (strcmp(insts[0], "STR") == 0){
             strcat(out, "00000");
@@ -386,6 +385,7 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
     int history[1000];
     strncpy(HD_used, to_char_arr(HD), 10000);
     while (strcmp(strsplice(HD_used, prog, prog + 5), "00000") == 0 && loop){
+        line++;
         history[line] = c_code;
         strcpy(HD_used, to_char_arr(HD));
         insts = strsplice(HD_used, c_code, c_code + 5);
@@ -552,7 +552,6 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
                 }
-                line++;
             }
             else {
                 if (strcmp(insts, "00001") == 0){
@@ -631,7 +630,6 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 else {
                     loop = 0;
                 }
-                line++;
             }
         }
         if (if_line == 1){
@@ -797,7 +795,6 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
                 }
-                line++;
             }
             else {
                 if (strcmp(insts, "00001") == 0){
@@ -876,7 +873,6 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 else {
                     loop = 0;
                 }
-                line++;
             }
             if_line_new--;
         }
@@ -1043,7 +1039,6 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
                 }
-                line++;
             }
             else {
                 if (strcmp(insts, "00001") == 0){
@@ -1122,7 +1117,6 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 else {
                     loop = 0;
                 }
-                line++;
             }
             if_line_new--;
         }
