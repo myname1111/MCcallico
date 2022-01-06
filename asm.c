@@ -138,7 +138,7 @@ char* assemble(const char asm_prog[]){
             strcpy(insts[k], tok);
             tok = strtok(NULL, ",");
         }
-        if (insts[0][strlen(insts[0])-1] == ':'){
+        if (insts[0][strlen(insts[0])-1] == ':'){ //TODO: FIX THIS
             jump_point[jump_point_len].key = strsplice(insts[0], 0, strlen(insts[0]) - 1);
             jump_point[jump_point_len].val = i;
             jump_point_len++;
@@ -572,6 +572,22 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     }
                     c_code += 77;
                 }
+                else if (strcmp(insts, "11100") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 < reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11101") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 == reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -656,6 +672,15 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11010") == 0){
                     c_code += 77;
+                }
+                else if (strcmp(insts, "11011") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11100") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11101") == 0){
+                    c_code += 11;
                 }
                 else {
                     loop = 0;
@@ -845,6 +870,30 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     }
                     c_code += 77;
                 }
+                else if (strcmp(insts, "11011") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 > reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11100") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 < reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11101") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 == reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -929,6 +978,15 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11010") == 0){
                     c_code += 77;
+                }
+                else if (strcmp(insts, "11011") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11100") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11101") == 0){
+                    c_code += 11;
                 }
                 else {
                     loop = 0;
@@ -1119,6 +1177,22 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     }
                     c_code += 77;
                 }
+                else if (strcmp(insts, "11100") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 < reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11101") == 0){
+                    reg1 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))]);
+                    reg2 = bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 9, c_code + 11))]);
+                    res_int = reg1 == reg2;
+                    sprintf(res, "%d", res_int);
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], dec2bin(res));
+                    c_code += 11;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -1203,6 +1277,15 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11010") == 0){
                     c_code += 77;
+                }
+                else if (strcmp(insts, "11011") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11100") == 0){
+                    c_code += 11;
+                }
+                else if (strcmp(insts, "11101") == 0){
+                    c_code += 11;
                 }
                 else {
                     loop = 0;
