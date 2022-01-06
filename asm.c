@@ -548,6 +548,30 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                         c_code += 29;
                     }
                 }
+                else if (strcmp(insts, "11001") == 0){
+                    int start_arr = bin2dec(strsplice(HD_used, c_code + 5, c_code + 29));
+                    int length_region = bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) - start_arr;
+                    int by = bin2dec(strsplice(HD_used, c_code + 53, c_code + 77));
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr + by], ram[i + start_arr]);
+                    }
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr + by], 0);
+                    }
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "11010") == 0){
+                    int start_arr = bin2dec(strsplice(HD_used, c_code + 5, c_code + 29));
+                    int length_region = bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) - start_arr;
+                    int by = bin2dec(strsplice(HD_used, c_code + 53, c_code + 77));
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr - by], ram[i + start_arr]);
+                    }
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr], 0);
+                    }
+                    c_code += 77;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -626,6 +650,12 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11000") == 0){
                     c_code += 29;
+                }
+                else if (strcmp(insts, "11001") == 0){
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "11010") == 0){
+                    c_code += 77;
                 }
                 else {
                     loop = 0;
@@ -791,6 +821,30 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                         c_code += 29;
                     }
                 }
+                else if (strcmp(insts, "11001") == 0){
+                    int start_arr = bin2dec(strsplice(HD_used, c_code + 5, c_code + 29));
+                    int length_region = bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) - start_arr;
+                    int by = bin2dec(strsplice(HD_used, c_code + 53, c_code + 77));
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr + by], ram[i + start_arr]);
+                    }
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr + by], 0);
+                    }
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "11010") == 0){
+                    int start_arr = bin2dec(strsplice(HD_used, c_code + 5, c_code + 29));
+                    int length_region = bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) - start_arr;
+                    int by = bin2dec(strsplice(HD_used, c_code + 53, c_code + 77));
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr - by], ram[i + start_arr]);
+                    }
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr], 0);
+                    }
+                    c_code += 77;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -869,6 +923,12 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11000") == 0){
                     c_code += 29;
+                }
+                else if (strcmp(insts, "11001") == 0){
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "11010") == 0){
+                    c_code += 77;
                 }
                 else {
                     loop = 0;
@@ -1035,6 +1095,30 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                         c_code += 29;
                     }
                 }
+                else if (strcmp(insts, "11001") == 0){
+                    int start_arr = bin2dec(strsplice(HD_used, c_code + 5, c_code + 29));
+                    int length_region = bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) - start_arr;
+                    int by = bin2dec(strsplice(HD_used, c_code + 53, c_code + 77));
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr + by], ram[i + start_arr]);
+                    }
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr + by], 0);
+                    }
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "11010") == 0){
+                    int start_arr = bin2dec(strsplice(HD_used, c_code + 5, c_code + 29));
+                    int length_region = bin2dec(strsplice(HD_used, c_code + 29, c_code + 53)) - start_arr;
+                    int by = bin2dec(strsplice(HD_used, c_code + 53, c_code + 77));
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr - by], ram[i + start_arr]);
+                    }
+                    for (int i = 0;i < length_region + 1;i++){
+                        strcpy(ram[i + start_arr], 0);
+                    }
+                    c_code += 77;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -1113,6 +1197,12 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11000") == 0){
                     c_code += 29;
+                }
+                else if (strcmp(insts, "11001") == 0){
+                    c_code += 77;
+                }
+                else if (strcmp(insts, "11010") == 0){
+                    c_code += 77;
                 }
                 else {
                     loop = 0;
