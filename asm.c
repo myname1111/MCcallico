@@ -592,6 +592,10 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     run(HD_used, ram, reg, dec2bin(strsplice(HD_used, c_code + 5, c_code + 29)));
                     c_code += 29;
                 }
+                else if (strcmp(insts, "11111") == 0){
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], ram[bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))])]);
+                    c_code += 9;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -688,6 +692,9 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11110") == 0){
                     c_code += 29;
+                }
+                else if (strcmp(insts, "11111") == 0){
+                    c_code += 9;
                 }
                 else {
                     loop = 0;
@@ -905,6 +912,10 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     run(HD_used, ram, reg, dec2bin(strsplice(HD_used, c_code + 5, c_code + 29)));
                     c_code += 29;
                 }
+                else if (strcmp(insts, "11111") == 0){
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], ram[bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))])]);
+                    c_code += 9;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -1001,6 +1012,9 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11110") == 0){
                     c_code += 29;
+                }
+                else if (strcmp(insts, "11111") == 0){
+                    c_code += 9;
                 }
                 else {
                     loop = 0;
@@ -1211,6 +1225,10 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                     run(HD_used, ram, reg, dec2bin(strsplice(HD_used, c_code + 5, c_code + 29)));
                     c_code += 29;
                 }
+                else if (strcmp(insts, "11111") == 0){
+                    strcpy(reg[bin2dec(strsplice(HD_used, c_code + 5, c_code + 7))], ram[bin2dec(reg[bin2dec(strsplice(HD_used, c_code + 7, c_code + 9))])]);
+                    c_code += 9;
+                }
                 else {
                     printf("\ndone with error with insts \"%s\" at line %d\n", insts, line);
                     loop = 0;
@@ -1307,6 +1325,9 @@ int run(char HD[][25], char ram[][25], char reg[][25], int prog){
                 }
                 else if (strcmp(insts, "11110") == 0){
                     c_code += 29;
+                }
+                else if (strcmp(insts, "11111") == 0){
+                    c_code += 9;
                 }
                 else {
                     loop = 0;
