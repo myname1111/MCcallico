@@ -6,6 +6,7 @@ extern "C"{
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include "LexerToken.h"
 
 using namespace std;
 
@@ -44,6 +45,7 @@ int main(int argc, char**argv){
     init();
     init_asm();
 
+    /*
     const char prog[] =
     "STR;"
     "END:;"
@@ -70,6 +72,11 @@ int main(int argc, char**argv){
     run(HD, ram, reg, 0);
 
     display();
+    */
+
+    LexerToken a = LexerToken("INT", "12");
+
+    cout << a << endl;
 
     glutMainLoop();
     return 0;
