@@ -7,6 +7,7 @@ extern "C"{
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include "LexerToken.h"
+#include "Lexer.h"
 
 using namespace std;
 
