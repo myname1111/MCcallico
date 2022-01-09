@@ -1,12 +1,20 @@
 #ifndef LEXER_H
 #define LEXER_H
+#include <vector>
+#include "IllegalCharError.h"
 using namespace std;
 
 class Lexer {
     public:
         string text;
-        LexerToken tokens[1000];
+        std::vector<LexerToken> tokens;
+        IllegalCharError error;
+        int pos;
+        char current_char;
         Lexer(string text_to_be_analyzed);
+        void advance();
+        void make_token();
+        void make_number();
     protected:
 
     private:

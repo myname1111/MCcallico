@@ -75,9 +75,10 @@ int main(int argc, char**argv){
     display();
     */
 
-    LexerToken a = LexerToken("INT", "12");
-
-    cout << a << endl;
+    Lexer lex = Lexer("1+2*3");
+    lex.make_token();
+    for (int i = 0;i < lex.tokens.size();i++)
+        cout << lex.tokens.at(i) << endl;
 
     glutMainLoop();
     return 0;
