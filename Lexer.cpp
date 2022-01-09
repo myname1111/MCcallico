@@ -31,6 +31,10 @@ void Lexer::advance(){
     Lexer::current_char = Lexer::pos < Lexer::text.length() ? Lexer::text[Lexer::pos] : '\0';
 }
 
+bool Lexer::is_alphabet(char in_char){
+    return (int(in_char) > 64 && int(in_char) < 91) | (int(in_char) > 96 && int(in_char) < 123);
+}
+
 void Lexer::make_number(){
     string num_str = "";
 
@@ -42,9 +46,20 @@ void Lexer::make_number(){
 
 }
 
+void Lexer::make_name(){
+    string name_str = "";
+
+    while ((Lexer::is_alphabet(Lexer::current_char) | isdigit(Lexer::current_char) | Lexer::current_char == '_') && Lexer::current_char != '\0'){
+        name_str += Lexer::current_char;
+        Lexer::advance();
+    }
+    Lexer::tokens.push_back(LexerToken("NAME", name_str));
+
+}
+
 void Lexer::make_token(){
     while (Lexer::current_char != '\0'){
-        if (Lexer::current_char == ' ' | Lexer::current_char == '\t'){ //ignored chars
+        if (Lexer::current_char == ' ' | Lexer::current_char == '\t' | Lexer::current_char == '\n'){ //ignored chars
             Lexer::advance();
         }
         else if (Lexer::current_char == '+'){
@@ -71,11 +86,24 @@ void Lexer::make_token(){
             Lexer::tokens.push_back(LexerToken("RPAREN", ")"));
             Lexer::advance();
         }
+        else if (Lexer::current_char == '='){
+            Lexer::tokens.push_back(LexerToken("EQUALS", "="));
+            Lexer::advance();
+        }
+        else if (Lexer::current_char == ';'){
+            Lexer::tokens.push_back(LexerToken("SEMICOLON", ";"));
+            Lexer::advance();
+        }
         else if (isdigit(Lexer::current_char)){
             Lexer::make_number();
         }
+        else if (Lexer::is_alphabet(Lexer::current_char) | Lexer::current_char == '_'){
+            Lexer::make_name();
+        }
         else {
             Lexer::error = IllegalCharError(Lexer::current_char);
+            cout << Lexer::error.as_string() << " At position " <<  Lexer::pos << endl;
+            Lexer::advance();
         }
     }
 }

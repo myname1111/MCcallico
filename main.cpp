@@ -75,7 +75,10 @@ int main(int argc, char**argv){
     display();
     */
 
-    Lexer lex = Lexer("1+2*3");
+    Lexer lex = Lexer(
+                      "a = 1 + 2 + 3 * 7;"
+                      "b = a + 2;"
+    );
     lex.make_token();
     for (int i = 0;i < lex.tokens.size();i++)
         cout << lex.tokens.at(i) << endl;
