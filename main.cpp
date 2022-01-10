@@ -8,6 +8,7 @@ extern "C"{
 #include <GL/glut.h>
 #include "LexerToken.h"
 #include "Lexer.h"
+#include "TreeNode.h"
 
 using namespace std;
 
@@ -82,7 +83,6 @@ int main(int argc, char**argv){
     lex.make_token();
     for (int i = 0;i < lex.tokens.size();i++)
         cout << lex.tokens.at(i) << endl;
-
     glutMainLoop();
     return 0;
 }
