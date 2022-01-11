@@ -1,10 +1,11 @@
 #include <iostream>
-#include<vector>
+#include <vector>
+#include "LexerToken.h"
 #include "TreeNode.h"
 
 using namespace std;
 
-TreeNode::TreeNode(string key_node, vector <string> value_node) {
+TreeNode::TreeNode(string key_node, vector <LexerToken> value_node) {
     TreeNode::key = key_node;
     TreeNode::value = value_node;
 }

@@ -1,5 +1,6 @@
 #ifndef TREE_H
 #define TREE_H
+#include "TreeNode.h"
 
 using namespace std;
 

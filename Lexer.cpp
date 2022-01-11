@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include "IllegalCharError.h"
-#include "LexerToken.h"
 #include "Lexer.h"
 
 using namespace std;

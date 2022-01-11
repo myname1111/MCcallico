@@ -1,0 +1,3 @@
+Expr : Term ((SUB|ADD) Term)*
+Term : Factor ((SUB|ADD) Factor)*
+Factor : INT|(Expr)

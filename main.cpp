@@ -84,5 +84,6 @@ int main(int argc, char**argv){
     for (int i = 0;i < lex.tokens.size();i++)
         cout << lex.tokens.at(i) << endl;
     glutMainLoop();
+
     return 0;
 }
