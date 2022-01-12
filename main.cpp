@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string.h>
 extern "C"{
     #include "asm.h"
@@ -6,9 +7,6 @@ extern "C"{
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include "LexerToken.h"
-#include "Lexer.h"
-#include "TreeNode.h"
 
 using namespace std;
 
@@ -47,17 +45,16 @@ int main(int argc, char**argv){
     init();
     init_asm();
 
-    /*
+    string mystring;
+    ifstream myfile (argv[1]);
+
+    if (myfile.is_open()) {
+        myfile >> mystring;
+        cout << mystring;
+    }
+
     const char prog[] =
-    "STR;"
-    "END:;"
-    "SRG,A,1;"
-    "JMP,END;"
-    "SRG,A,0;"
-    "IF,A;"
-    "SRG,B,0;"
-    "SRG,B,1;"
-    "END";
+    "";
     char* bin = assemble(prog);
     cout << bin << endl;
     int a = 0;
@@ -74,15 +71,6 @@ int main(int argc, char**argv){
     run(HD, ram, reg, 0);
 
     display();
-    */
-
-    Lexer lex = Lexer(
-                      "a = 1 + 2 + 3 * 7;"
-                      "b = a + 2;"
-    );
-    lex.make_token();
-    for (int i = 0;i < lex.tokens.size();i++)
-        cout << lex.tokens.at(i) << endl;
     glutMainLoop();
 
     return 0;
